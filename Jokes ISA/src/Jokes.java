@@ -1,3 +1,7 @@
+/*
+ * 
+ */
+
 import java.io.IOException;
 
 public class Jokes extends Assembler
