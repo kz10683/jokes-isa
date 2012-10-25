@@ -193,7 +193,7 @@ public class Jokes extends Assembler
 			instruction.operands[0].name = "000000000" + instruction.operands[0].name;
 			instruction.operands[0].name = instruction.operands[0].name.substring(instruction.operands[0].name.length() - 9, instruction.operands[0].name.length());
 			*/
-		}
+		} 
 	}
 
 	@Override

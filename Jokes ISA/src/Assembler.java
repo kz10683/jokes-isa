@@ -471,7 +471,7 @@ public abstract class Assembler
       {
         instructions[instructionCount] = processInstruction(sourceCodeLine);
         updateProgramCounter(instructions[instructionCount]);
-        instructionCount++;
+        instructionCount++; 
       }
       sourceCodeLine = getNextInputLine();
     }
