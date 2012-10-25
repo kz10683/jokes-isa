@@ -176,7 +176,7 @@ public class Jokes extends Assembler
 		// TODO Auto-generated method stub
 		
 	}
-
+ 
 	@Override
 	void replaceInstructionLabel(Instruction instruction)
 	{

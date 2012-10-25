@@ -355,7 +355,7 @@ public abstract class Assembler
     }
     else if(operand.startsWith("0x"))
     {
-      return "immediate";
+      return "immediate"; 
     }
     else
     {
