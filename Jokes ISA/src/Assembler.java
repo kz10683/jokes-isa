@@ -104,8 +104,23 @@ class Operand
     //        return Integer.valueOf(name.substring(name.lastIndexOf("0x")+2,name.length()),16).intValue();
     if(name.startsWith("0x"))
       return Long.valueOf(name.substring(name.lastIndexOf("0x")+2,name.length()),16).longValue();
+    else if (isNumeric(name))
+      return Long.valueOf(name).longValue();
     else
       return Integer.MIN_VALUE;
+  }
+  
+  public static boolean isNumeric(String str)  
+  {  
+    try  
+    {  
+      Double.parseDouble(str);  
+    }  
+    catch(NumberFormatException nfe)  
+    {  
+      return false;  
+    }  
+    return true;  
   }
 
   public String getOperandType()
@@ -114,7 +129,7 @@ class Operand
     {
       return "register";
     }
-    else if(name.startsWith("0x"))
+    else if(name.startsWith("0x") || isNumeric(name))
     {
       return "immediate";
     }
@@ -128,6 +143,7 @@ class Instruction
 {
   public String operator;
   public Operand operands[];
+  public int line_number;
 
   Instruction(String i_operator, Operand i_operands[])
   {
@@ -286,6 +302,7 @@ public abstract class Assembler
   Instruction processInstruction(String sourceCode)
   {
     Instruction instruction = new Instruction(sourceCode);
+    instruction.line_number = instructionCount;
     return instruction;
   }
   // process the data.
@@ -360,6 +377,7 @@ public abstract class Assembler
 
   // The student has to implement it for processing the labels.
   abstract void processLabel(String sourceCode);
+  abstract void processLabel(String sourceCode, int programCounter);
 
   /**
    * The student has to implement it for generating the machine codes.
@@ -445,7 +463,7 @@ public abstract class Assembler
       {
         String label = extractLabel(sourceCodeLine);
         if(label != null)
-          processLabel(label);
+          processLabel(label, programCounter);
         else
           outputErrorMessage("The input line does not contains a label");
       }
