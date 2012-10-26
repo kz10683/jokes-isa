@@ -31,24 +31,78 @@ public class Jokes extends Assembler
 	}
 
 	@Override
-	String generateCode(Instruction instruction)
-	{
-		String opcode = "";
+	String generateCode(Instruction instruction) 
+    {
+        String opcode = "";
         String func_code = "";
         String op1 = instruction.operands[0].name;
         String op2 = "";
         String reset = "0";        
         String operator = instruction.operator;     
         String str = "";
-        
-        /*
-        if (instruction.operands[0].getOperandType().equals("label"))
+
+        if (operator.equals("la"))
         {
-            op1 = Integer.toBinaryString(map.get(instruction.operands[0].name));
-            op1 = "000000000" + op1;
-            op1 = op1.substring(op1.length() - 9, op1.length());
+            op2 = Long.toBinaryString(instruction.operands[1].extractImmediate());
+            while (op2.length() != 34)
+            {
+                op2 = "0" + op2;
+            }
+            
+            String first = op2.substring(0, 9);
+            String second = op2.substring(9, 18);
+            String third = op2.substring(18, 27);
+            String fourth = op2.substring(27, 34);
+            
+            first = Integer.toString(Integer.parseInt(first, 2));
+            second = Integer.toString(Integer.parseInt(second, 2));
+            third = Integer.toString(Integer.parseInt(third, 2));
+            fourth = Integer.toString(Integer.parseInt(fourth, 2));
+            
+            Operand lr_1 = new Operand(first, 0);
+            Operand[] op_lr1 = {lr_1};          
+            Instruction ins_lr_1 = new Instruction("lr", op_lr1);
+            
+            Operand sloi_0 = new Operand(op1, 0);
+            Operand sloi_1 = new Operand("0", 0);
+            Operand[] op_sloi = {sloi_0, sloi_1}; 
+            Instruction ins_sloi_1 = new Instruction("sloi", op_sloi);
+            
+            Operand lr_2 = new Operand(second, 0);
+            Operand[] op_lr2 = {lr_2};          
+            Instruction ins_lr_2 = new Instruction("lr", op_lr2);
+            
+            sloi_0 = new Operand(op1, 0);
+            sloi_1 = new Operand("9", 0);
+            Operand[] op_sloi2 = {sloi_0, sloi_1}; 
+            Instruction ins_sloi_2 = new Instruction("sloi", op_sloi2);
+            
+            Operand lr_3 = new Operand(third, 0);
+            Operand[] op_lr3 = {lr_3};          
+            Instruction ins_lr_3 = new Instruction("lr", op_lr3);
+            
+            sloi_0 = new Operand(op1, 0);
+            sloi_1 = new Operand("9", 0);
+            Operand[] op_sloi3 = {sloi_0, sloi_1}; 
+            Instruction ins_sloi_3 = new Instruction("sloi", op_sloi3);
+            
+            Operand lr_4 = new Operand(fourth, 0);
+            Operand[] op_lr4 = {lr_4};          
+            Instruction ins_lr_4 = new Instruction("lr", op_lr4);
+            
+            sloi_0 = new Operand(op1, 0);
+            sloi_1 = new Operand("7", 0);
+            Operand[] op_sloi4 = {sloi_0, sloi_1}; 
+            Instruction ins_sloi_4 = new Instruction("sloi", op_sloi4);
+            
+            // System.out.println(first + "\t" + second + "\t" + third + "\t" + fourth);
+            
+            String ret_str = generateCode(ins_lr_1) + "\n" + generateCode(ins_sloi_1) + "\n" + generateCode(ins_lr_2) + "\n" + generateCode(ins_sloi_2)
+                                + "\n" + generateCode(ins_lr_3) + "\n" + generateCode(ins_sloi_3) + "\n" + generateCode(ins_lr_4)
+                                + "\n" + generateCode(ins_sloi_4);
+                    
+            return ret_str;
         }
-        */
         
         if (instruction.operands[0].getOperandType().equals("immediate") && instruction.operator.equals("ba") || instruction.operator.equals("lr"))
         {
@@ -163,10 +217,10 @@ public class Jokes extends Assembler
         else
             str = opcode + op1 + op2 + reset + func_code;
         
-        System.out.print(instruction.line_number + "\t" + str + "\t\t");
+        System.out.print(str + "\t\t");
         instruction.print();
         return str;
-	}
+    }
 
 	@Override
 	void updateProgramCounter(Instruction instruction)
