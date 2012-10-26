@@ -7,24 +7,27 @@ import java.util.HashMap;
 
 public class Jokes extends Assembler
 {
-	HashMap<String, Integer> map = new HashMap<String, Integer>();
+	HashMap<String, Integer> map;
+	HashMap<String, Integer> data_map;
 	
 	public Jokes(String[] args) throws IOException
 	{
 		super(args);
 	}
-	
+		
 	@Override
 	void processLabel(String sourceCode)
 	{
-		// TODO Auto-generated method stub
-	}
-	
-	@Override
-	void processLabel(String sourceCode, int programCounter)
-	{
-		map.put(sourceCode, programCounter);
-		System.out.println("PC: " + sourceCode + " " + programCounter);
+		if (currentCodeSection == 0)
+		{
+			map.put(sourceCode, programCounter);
+			System.out.println("PC: " + sourceCode + " " + programCounter);
+		}
+		else
+		{
+			data_map.put(sourceCode, dataMemoryAddress);
+			System.out.println("Data: " + sourceCode + " " + dataMemoryAddress);
+		}
 	}
 
 	@Override
@@ -177,8 +180,8 @@ public class Jokes extends Assembler
 	@Override
 	void initialization() throws IOException
 	{
-		// TODO Auto-generated method stub
-		
+		map = new HashMap<String, Integer>();
+		data_map = new HashMap<String, Integer>();
 	}
  
 	@Override
@@ -203,8 +206,22 @@ public class Jokes extends Assembler
 	@Override
 	void replaceMemoryLabel()
 	{
-		// TODO Auto-generated method stub
-		
+		System.out.println("--replaceMemoryLabel--");
+		for (int i = 0; i < memory.entries.length; i++)
+		{
+			int address = memory.entries[i].address;
+			String data = memory.entries[i].data;
+			if (data != null)
+			{
+				System.out.println(address + ": " + data);
+				if (!data.startsWith("0x") || isNumeric(data))
+				{
+					memory.entries[i].address = data_map.get(data);
+					System.out.println(">>Replaced label " + data  + " with address " + data_map.get(data));
+				}
+			}
+		}
+		System.out.println("--end replaceMemoryLabel--");
 	}
 	
 	public static void main(String[] args) throws IOException

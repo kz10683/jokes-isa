@@ -104,24 +104,13 @@ class Operand
     //        return Integer.valueOf(name.substring(name.lastIndexOf("0x")+2,name.length()),16).intValue();
     if(name.startsWith("0x"))
       return Long.valueOf(name.substring(name.lastIndexOf("0x")+2,name.length()),16).longValue();
-    else if (isNumeric(name))
+    else if (Assembler.isNumeric(name))
       return Long.valueOf(name).longValue();
     else
       return Integer.MIN_VALUE;
   }
   
-  public static boolean isNumeric(String str)  
-  {  
-    try  
-    {  
-      Double.parseDouble(str);  
-    }  
-    catch(NumberFormatException nfe)  
-    {  
-      return false;  
-    }  
-    return true;  
-  }
+  
 
   public String getOperandType()
   {
@@ -129,7 +118,7 @@ class Operand
     {
       return "register";
     }
-    else if(name.startsWith("0x") || isNumeric(name))
+    else if(name.startsWith("0x") || Assembler.isNumeric(name))
     {
       return "immediate";
     }
@@ -377,7 +366,6 @@ public abstract class Assembler
 
   // The student has to implement it for processing the labels.
   abstract void processLabel(String sourceCode);
-  abstract void processLabel(String sourceCode, int programCounter);
 
   /**
    * The student has to implement it for generating the machine codes.
@@ -463,7 +451,7 @@ public abstract class Assembler
       {
         String label = extractLabel(sourceCodeLine);
         if(label != null)
-          processLabel(label, programCounter);
+          processLabel(label);
         else
           outputErrorMessage("The input line does not contains a label");
       }
@@ -497,5 +485,19 @@ public abstract class Assembler
     out_code.close();
     out_data.close();
   }
+  
+  public static boolean isNumeric(String str)  
+  {  
+    try  
+    {  
+      Double.parseDouble(str);  
+    }  
+    catch(NumberFormatException nfe)  
+    {  
+      return false;  
+    }  
+    return true;  
+  }
+
 }
 
