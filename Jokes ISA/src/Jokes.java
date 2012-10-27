@@ -33,7 +33,7 @@ public class Jokes extends Assembler
 	@Override
 	String generateCode(Instruction instruction) 
     {
-        String opcode = "";
+		String opcode = "";
         String func_code = "";
         String op1 = instruction.operands[0].name;
         String op2 = "";
@@ -43,8 +43,16 @@ public class Jokes extends Assembler
 
         if (operator.equals("la"))
         {
-            op2 = Long.toBinaryString(instruction.operands[1].extractImmediate());
-            while (op2.length() != 34)
+            String name = instruction.operands[1].name;
+            if (map.get(name) == null) 
+            {
+                System.out.println("Label " + name + " does not exist!");
+                return "";
+            }
+            
+            op2 = Integer.toBinaryString(map.get(name));
+            
+            while (op2.length() < 34)
             {
                 op2 = "0" + op2;
             }
@@ -143,7 +151,7 @@ public class Jokes extends Assembler
                 case "$s3": op1 = "1101"; break;
                 case "$c0": op1 = "1110"; break;
                 case "$c1": op1 = "1111"; break;
-                default: break;
+                default: System.out.println("Register " + op1 + " is not a valid register!"); return "";
             }
         }
         
@@ -167,7 +175,7 @@ public class Jokes extends Assembler
                 case "$s3": op2 = "1101"; break;
                 case "$c0": op2 = "1110"; break;
                 case "$c1": op2 = "1111"; break;
-                default: break;
+                default: System.out.println("Register " + op2 + " is not a valid register!"); return "";
             }    
         }   
         
@@ -204,7 +212,7 @@ public class Jokes extends Assembler
             case "blt":  opcode = "111"; func_code = "01"; reset = "0"; break;
             case "beq":  opcode = "111"; func_code = "10"; reset = "0"; break;
             case "bne":  opcode = "111"; func_code = "11"; reset = "0"; break;
-            default: break;
+            default: System.out.println("Instruction " + operator + " is not a valid instruction!"); return "";
         }
         
         //System.out.println("opcode: " + opcode + " op1: " + op1 + " op2: " + op2 + " reset: " + reset + " func_code " + func_code);
@@ -217,7 +225,9 @@ public class Jokes extends Assembler
         else
             str = opcode + op1 + op2 + reset + func_code;
         
-        System.out.print(str + "\t\t");
+        if (str.length() != 14) return str + " is not a valid instruction! ";
+        
+        System.out.print(instruction.line_number + "\t" + str + "\t\t");
         instruction.print();
         return str;
     }
@@ -248,12 +258,6 @@ public class Jokes extends Assembler
 			name = Integer.toBinaryString(map.get(name));
 			name = "000000000" + name;
 			instruction.operands[0].name = name.substring(name.length() - 9, name.length());
-			
-			/*
-			instruction.operands[0].name = Integer.toBinaryString(map.get(instruction.operands[0].name));
-			instruction.operands[0].name = "000000000" + instruction.operands[0].name;
-			instruction.operands[0].name = instruction.operands[0].name.substring(instruction.operands[0].name.length() - 9, instruction.operands[0].name.length());
-			*/
 		} 
 	}
 
@@ -269,8 +273,8 @@ public class Jokes extends Assembler
 			{
 				System.out.println(address + ": " + data);
 				if (!data.startsWith("0x") || isNumeric(data))
-				{
-					memory.entries[i].address = data_map.get(data);
+				{					
+					memory.entries[i].data = "0x" + Integer.toHexString(data_map.get(data));
 					System.out.println(">>Replaced label " + data  + " with address " + data_map.get(data));
 				}
 			}

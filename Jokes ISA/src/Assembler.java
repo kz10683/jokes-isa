@@ -291,7 +291,7 @@ public abstract class Assembler
   Instruction processInstruction(String sourceCode)
   {
     Instruction instruction = new Instruction(sourceCode);
-    instruction.line_number = instructionCount;
+    instruction.line_number = programCounter;
     return instruction;
   }
   // process the data.
@@ -457,9 +457,18 @@ public abstract class Assembler
       }
       else
       {
-        instructions[instructionCount] = processInstruction(sourceCodeLine);
-        updateProgramCounter(instructions[instructionCount]);
-        instructionCount++; 
+    	if (currentCodeSection == 1)
+    	{
+    		//System.out.println(sourceCodeLine);
+    		memory.add(sourceCodeLine, dataMemoryAddress);
+            dataMemoryAddress++;
+    	}
+    	else
+    	{
+	        instructions[instructionCount] = processInstruction(sourceCodeLine);
+	        updateProgramCounter(instructions[instructionCount]);
+	        instructionCount++; 
+    	}
       }
       sourceCodeLine = getNextInputLine();
     }
