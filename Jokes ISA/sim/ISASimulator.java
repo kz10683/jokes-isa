@@ -1,4 +1,4 @@
-package sim;
+
 
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue; // for channels
@@ -595,7 +595,6 @@ public class ISASimulator {
         	switch(func_code)
         	{
         		case "00": // add
-        			System.out.println("Goes here");
         			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
         	        rt = Integer.valueOf(reg1,2).intValue();
         	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
@@ -1057,7 +1056,6 @@ public class ISASimulator {
 
   public static void main(String[] args) {
     ISASimulator sim = new ISASimulator();
-
     sim.run(); // run the simulator
   }
 }

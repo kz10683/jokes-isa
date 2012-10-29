@@ -44,13 +44,13 @@ public class Jokes extends Assembler
         if (operator.equals("la"))
         {
             String name = instruction.operands[1].name;
-            if (map.get(name) == null) 
+            if (map.get(name) == null && data_map.get(name) == null) 
             {
                 System.out.println("Label " + name + " does not exist!");
                 return "";
             }
             
-            op2 = Integer.toBinaryString(map.get(name));
+            op2 = (map.get(name) != null) ? Integer.toBinaryString(map.get(name)) : Integer.toBinaryString(data_map.get(name));
             
             while (op2.length() < 34)
             {
@@ -106,8 +106,7 @@ public class Jokes extends Assembler
             // System.out.println(first + "\t" + second + "\t" + third + "\t" + fourth);
             
             String ret_str = generateCode(ins_lr_1) + "\n" + generateCode(ins_sloi_1) + "\n" + generateCode(ins_lr_2) + "\n" + generateCode(ins_sloi_2)
-                                + "\n" + generateCode(ins_lr_3) + "\n" + generateCode(ins_sloi_3) + "\n" + generateCode(ins_lr_4)
-                                + "\n" + generateCode(ins_sloi_4);
+                            + "\n" + generateCode(ins_lr_3) + "\n" + generateCode(ins_sloi_3) + "\n" + generateCode(ins_lr_4) + "\n" + generateCode(ins_sloi_4);
                     
             return ret_str;
         }
@@ -179,6 +178,7 @@ public class Jokes extends Assembler
             }    
         }   
         
+        // for cmp, if 2nd value is a register, then reset bit is set to 1. else, reset bit is 0 (that means it's an immediate);
         switch (operator)
         {
             case "add":  opcode = "000"; func_code = "00"; break;
@@ -195,10 +195,10 @@ public class Jokes extends Assembler
             case "ori":  opcode = "010"; func_code = "11"; break;
             case "xor":  opcode = "011"; func_code = "00"; break; 
             case "nor":  opcode = "011"; func_code = "01"; break;
-            case "cmp":  opcode = "011"; func_code = "10"; break;
+            case "cmp":  opcode = "011"; func_code = "10"; if (instruction.operands[1].getOperandType().equals("register")) reset = "1"; break;
             case "lw":   opcode = "100"; func_code = "00"; reset = "0"; break;
             case "sw":   opcode = "100"; func_code = "01"; reset = "0"; break;
-            case "li":   opcode = "100"; func_code = "10"; break;
+            case "lior": opcode = "100"; func_code = "10"; if (instruction.operands[1].getOperandType().equals("register")) reset = "1"; break;
             case "lr":   opcode = "100"; func_code = "11"; break;    
             case "in":   opcode = "101"; func_code = "00"; break; 
             case "out":  opcode = "101"; func_code = "01"; break;
@@ -220,16 +220,17 @@ public class Jokes extends Assembler
         if (operator.equals("jr"))
             op2 = "0000";
         
-        if (operator.equals("lr") || operator.startsWith("b") || operator.equals("j") || operator.equals("jal"))
-            str = opcode + op1 + op2 + func_code;
-        else
+        if (operator.startsWith("b") || operator.equals("j") || operator.equals("jal") || operator.equals("lr"))
+            str = opcode + op1 + func_code;
+        else            
             str = opcode + op1 + op2 + reset + func_code;
         
         if (str.length() != 14) return str + " is not a valid instruction! ";
         
-        System.out.print(instruction.line_number + "\t" + str + "\t\t");
+        System.out.print(str + "\t\t");
         instruction.print();
-        return str;
+        
+        return "000" + str;
     }
 
 	@Override

@@ -5,12 +5,14 @@ fooPtr:
 	foo	
 fooPtr2:
 	foo
+fooPtr3:
+	fooPtr2
 
 .text
 // need to reset $ir after every branch, sw, or lw
 supergarbage:
-   
-    subi $sp, 5
+
+subi $sp, 5
 
 sw $ra, $sp            // callee saved registers
 

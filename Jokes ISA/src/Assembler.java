@@ -474,7 +474,7 @@ public abstract class Assembler
     }
     // Pass 2: Replace labels and output the code and memory.
     // output code
-    out_code.write("MEMORY_INITIALIZATION_RADIX=16;\nMEMORY_INITIALIZATION_VECTOR=\n");
+    out_code.write("MEMORY_INITIALIZATION_RADIX=2;\nMEMORY_INITIALIZATION_VECTOR=\n");
     for(int i=0; i < instructionCount; i++)
     {
       replaceInstructionLabel(instructions[i]);
@@ -489,7 +489,7 @@ public abstract class Assembler
     // replace labels in data field.
     replaceMemoryLabel();
     // output the memory states.
-    out_data.write("MEMORY_INITIALIZATION_RADIX=16;\nMEMORY_INITIALIZATION_VECTOR=\n");
+    out_data.write("MEMORY_INITIALIZATION_RADIX=2;\nMEMORY_INITIALIZATION_VECTOR=\n");
     out_data.write(memory.dump());
     out_code.close();
     out_data.close();
