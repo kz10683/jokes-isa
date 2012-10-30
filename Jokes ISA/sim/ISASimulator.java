@@ -31,6 +31,7 @@ public class ISASimulator {
   private Int34[] reg_file;
 
   private ArrayList<LinkedBlockingQueue<Int34>> channels; //Array  of Linked Lists (LL) which each list acting as a channel. 
+  private boolean halt = false;
 
   // default constructor
   public ISASimulator() { 
@@ -576,7 +577,7 @@ public class ISASimulator {
     int rs, rt, imm;
     int reset;
 
-    while(num_done < num_insts) {
+    while(num_done < num_insts && !halt) {
       curr_inst = inst_mem[PC]; // get the next instruction
       curr_inst = curr_inst.substring(3);
       opcode_str = curr_inst.substring(0,OPCODE_LENGTH); // get the op-code bits
@@ -586,7 +587,7 @@ public class ISASimulator {
       reset = Integer.valueOf(reset_bit,2).intValue();
       func_code = curr_inst.substring(12);
       
-      System.out.println("opcode is " + opcode + " funcode is " + func_code + " reset is " + reset + " current instruction is " + curr_inst);
+      // System.out.println("opcode is " + opcode + " funcode is " + func_code + " reset is " + reset + " current instruction is " + curr_inst);
       
       // TODO: complete this
       switch (opcode) 
@@ -628,6 +629,7 @@ public class ISASimulator {
 	       	        imm = Integer.valueOf(immediate,2).intValue();
 	       	        System.out.println("subi $" + rt + ", " + imm + "\t\tPC: " + PC); 
 	       	        reg_file[rt] = reg_file[rt].subtract(new Int34(imm));
+	       	        PC++;
         			break;
         	}
         	break;
@@ -640,7 +642,7 @@ public class ISASimulator {
 	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
 	       	        rs = Integer.valueOf(reg2,2).intValue();
 	       	        System.out.println("sll $" + rt + ", $" + rs + "\t\tPC: " + PC); 
-	       	        reg_file[rt] = reg_file[rt].shiftLeft(rs);
+	       	        reg_file[rt] = reg_file[rt].shiftLeft((int)(reg_file[rs].longValue()));
 	       	        PC++;
         			break;
         		case "01": // slli
@@ -658,7 +660,7 @@ public class ISASimulator {
 	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
 	       	        rs = Integer.valueOf(reg2,2).intValue();
 	       	        System.out.println("srl $" + rt + ", $" + rs + "\t\tPC: " + PC); 
-	       	        reg_file[rt] = reg_file[rt].shiftRight(rs);
+	       	        reg_file[rt] = reg_file[rt].shiftRight((int)(reg_file[rs].longValue()));
         			break;
         		case "11": // srli
         			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
@@ -675,36 +677,45 @@ public class ISASimulator {
         	switch(func_code)
         	{
         		case "00": // and
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
-	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        rs = Integer.valueOf(reg2,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        //rt = Integer.valueOf(reg1,2).intValue();
+	       	        rt = getRegImm(curr_inst, OPCODE_LENGTH);
+	       	        //reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        //rs = Integer.valueOf(reg2,2).intValue();
+	       	        rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        System.out.println("and $" + rt + ", $" + rs + "\t\tPC: " + PC); 
 	       	        reg_file[rt] = reg_file[rt].and(reg_file[rs]);
 	       	        PC++;
         			break;
         		case "01": // andi
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
-	       	        immediate = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        imm = Integer.valueOf(immediate,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        //rt = Integer.valueOf(reg1,2).intValue();
+        			rt = getRegImm(curr_inst, OPCODE_LENGTH);
+	       	        //immediate = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        //imm = Integer.valueOf(immediate,2).intValue();
+	       	        imm = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        System.out.println("andi $" + rt + ", " + imm + "\t\tPC: " + PC); 
 	       	        reg_file[rt] = reg_file[rt].and(new Int34(imm));
 	       	        PC++;
         			break;
         		case "10": // or
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
-	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        rs = Integer.valueOf(reg2,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        //rt = Integer.valueOf(reg1,2).intValue();
+	       	        rt = getRegImm(curr_inst, OPCODE_LENGTH);
+	       	        //reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        //rs = Integer.valueOf(reg2,2).intValue();
+	       	        rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        System.out.println("or $" + rt + ", $" + rs + "\t\tPC: " + PC); 
 	       	        reg_file[rt] = reg_file[rt].or(reg_file[rs]);
+	       	        PC++;
         			break;
         		case "11": // ori
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
-	       	        immediate = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        imm = Integer.valueOf(immediate,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        //rt = Integer.valueOf(reg1,2).intValue();
+	       	        rt = getRegImm(curr_inst, OPCODE_LENGTH);
+	       	        //immediate = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        //imm = Integer.valueOf(immediate,2).intValue();
+	       	        imm = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        System.out.println("ori $" + rt + ", " + imm + "\t\tPC: " + PC); 
 	       	        reg_file[rt] = reg_file[rt].or(new Int34(imm));
 	       	        PC++;
@@ -715,42 +726,49 @@ public class ISASimulator {
         	switch(func_code)
         	{
         		case "00": // xor
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
-	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        rs = Integer.valueOf(reg2,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        //rt = Integer.valueOf(reg1,2).intValue();
+	       	        rt = getRegImm(curr_inst, OPCODE_LENGTH);
+	       	        //reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        //rs = Integer.valueOf(reg2,2).intValue();
+	       	        rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        System.out.println("xor $" + rt + ", $" + rs + "\t\tPC: " + PC); 
 	       	        reg_file[rt] = reg_file[rt].xor(reg_file[rs]);
 	       	        PC++;
         			break;
         		case "01": // nor
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
-	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        rs = Integer.valueOf(reg2,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        //rt = Integer.valueOf(reg1,2).intValue();
+	       	        rt = getRegImm(curr_inst, OPCODE_LENGTH);
+	       	        //reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        //rs = Integer.valueOf(reg2,2).intValue();
+	       	        rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        System.out.println("nor $" + rt + ", $" + rs + "\t\tPC: " + PC); 
 	       	        reg_file[rt] = reg_file[rt].or(reg_file[rs]);
 	       	        reg_file[rt] = reg_file[rt].not();
 	       	        PC++;
         			break;
         		case "10": // cmp
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        //rt = Integer.valueOf(reg1,2).intValue();
+	       	        rt = getRegImm(curr_inst, OPCODE_LENGTH);
 	       	        if (reset == 1) // register
 	       	        {
-	       	        	reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        	rs = Integer.valueOf(reg2,2).intValue();
+	       	        	//reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        	//rs = Integer.valueOf(reg2,2).intValue();
+	       	        	rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        	System.out.println("cmp $" + rt + ", $" + rs + "\t\tPC: " + PC);
-	       	        	reg_file[12] = reg_file[rt];
-		       	        reg_file[13] = reg_file[rs];
+	       	        	reg_file[14] = reg_file[rt];
+		       	        reg_file[15] = reg_file[rs];
 	       	        }
 	       	        else // immediate
 	       	        {
-	       	        	immediate = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        	imm = Integer.valueOf(immediate,2).intValue();
+	       	        	//immediate = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        	//imm = Integer.valueOf(immediate,2).intValue();
+	       	        	imm = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        	System.out.println("cmp $" + rt + ", " + imm + "\t\tPC: " + PC);
-	       	        	reg_file[12] = reg_file[rt];
-		       	        reg_file[13] = new Int34(imm);
+	       	        	reg_file[14] = reg_file[rt];
+		       	        reg_file[15] = new Int34(imm);
 	       	        }	       	        
 	       	        PC++;
         			break;
@@ -762,61 +780,80 @@ public class ISASimulator {
         	switch(func_code)
         	{
         		case "00": // lw
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
-	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        rs = Integer.valueOf(reg2,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        //rt = Integer.valueOf(reg1,2).intValue();
+	       	        rt = getRegImm(curr_inst, OPCODE_LENGTH);
+	       	        //reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        //rs = Integer.valueOf(reg2,2).intValue();
+	       	        rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        System.out.println("lw $" + rt + ", $" + rs + "\t\tPC: " + PC); 
 	       	        reg_file[rt] = data_mem[(int)(reg_file[rs].longValue())];
 	       	        PC++;
         			break;
         		case "01": // sw
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
-	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        rs = Integer.valueOf(reg2,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        //rt = Integer.valueOf(reg1,2).intValue();
+	       	        rt = getRegImm(curr_inst, OPCODE_LENGTH);
+	       	        //reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        //rs = Integer.valueOf(reg2,2).intValue();
+	       	        rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        System.out.println("sw $" + rt + ", $" + rs + "\t\tPC: " + PC); 
 	       	        data_mem[(int)(reg_file[rs].longValue())] = reg_file[rt];
 	       	        PC++;
         			break;
         		case "10": // lior
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        //rt = Integer.valueOf(reg1,2).intValue();
+	       	        rt = getRegImm(curr_inst, OPCODE_LENGTH);
 	       	        if (reset == 1) // register
 	       	        {
-	       	        	reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        	rs = Integer.valueOf(reg2,2).intValue();
+	       	        	//reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        	//rs = Integer.valueOf(reg2,2).intValue();
+	       	        	rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        	System.out.println("lior $" + rt + ", $" + rs + "\t\tPC: " + PC);
 	       	        	reg_file[rt] = reg_file[rs];
 	       	        }
 	       	        else // immediate
 	       	        {
-	       	        	immediate = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        	imm = Integer.valueOf(immediate,2).intValue();
+	       	        	//immediate = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        	//imm = Integer.valueOf(immediate,2).intValue();
+	       	        	imm = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        	System.out.println("lior $" + rt + ", " + imm + "\t\tPC: " + PC);
 	       	        	reg_file[rt] = new Int34(imm);
 	       	        }	 
 	       	        PC++;
         			break;
         		case "11": // lr
-        			immediate = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+9);
-	       	        rs = Integer.valueOf(immediate,2).intValue();
+        			//immediate = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+9);
+	       	        //rs = Integer.valueOf(immediate,2).intValue();
+	       	        rs = getJmpImm(curr_inst, OPCODE_LENGTH);
 	       	        System.out.println("lr " + rs + "\t\tPC: " + PC);
     	        	reg_file[2] = new Int34(rs);
     	        	PC++;
         			break;
         	}
         	break;        	
-        case 5:
+        case 5: // poll is for out, and offer is for in
         	switch(func_code)
         	{
         		case "00": // in
+        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        rt = Integer.valueOf(reg1,2).intValue();
+	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        rs = Integer.valueOf(reg2,2).intValue();
+        			channels.get(rt).offer(new Int34(rs));
         			PC++;
         			break;
         		case "01": // out
+        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+	       	        rt = Integer.valueOf(reg1,2).intValue();
+	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
+	       	        rs = Integer.valueOf(reg2,2).intValue();
+        			// channels.set(rs, channels.get(rt).poll()); 
         			PC++;
         			break;
-        		case "10": // halt        			
+        		case "10": // halt   
+        			halt = true;
         			break;
         		case "11": // sloi
         			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
@@ -852,8 +889,8 @@ public class ISASimulator {
         		case "11": // jr
         			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
         			rt = Integer.valueOf(reg1,2).intValue();
-	       	        System.out.println("jr $" + rt + "\t\tPC:" + PC);	       	        
-	       	        PC = (int)(data_mem[(int)(reg_file[rt].longValue())].longValue());
+	       	        System.out.println("jr $" + rt + "\t\tPC:" + PC);	               
+	       	        PC = (int)(reg_file[1].longValue());
         			break;
         	}
         	break;
@@ -861,28 +898,32 @@ public class ISASimulator {
         	switch(func_code)
         	{
         		case "00": // bgt
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+9);
-        			rt = Integer.valueOf(reg1,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+9);
+        			//rt = Integer.valueOf(reg1,2).intValue();
+        			rt = getJmpImm(curr_inst, OPCODE_LENGTH);
 	       	        System.out.println("bgt " + rt + "\t\tPC:" + PC);
-	       	        PC = (reg_file[12].longValue() > reg_file[13].longValue()) ? rt : PC + 1;
+	       	        PC = (reg_file[14].longValue() > reg_file[15].longValue()) ? rt : PC + 1;
         			break;
         		case "01": // blt
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+9);
-        			rt = Integer.valueOf(reg1,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+9);
+        			//rt = Integer.valueOf(reg1,2).intValue();
+        			rt = getJmpImm(curr_inst, OPCODE_LENGTH);
 	       	        System.out.println("blt " + rt + "\t\tPC:" + PC);
-	       	        PC = (reg_file[12].longValue() < reg_file[13].longValue()) ? rt : PC + 1;
+	       	        PC = (reg_file[14].longValue() < reg_file[15].longValue()) ? rt : PC + 1;
         			break;
         		case "10": // beq
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+9);
-        			rt = Integer.valueOf(reg1,2).intValue();
-	       	        System.out.println("beq " + rt + "\t\tPC:" + PC);
-	       	        PC = (reg_file[12].longValue() == reg_file[13].longValue()) ? rt : PC + 1;
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+9);
+        			//rt = Integer.valueOf(reg1,2).intValue();
+        			rt = getJmpImm(curr_inst, OPCODE_LENGTH);
+        			System.out.println("beq " + rt + "\t\tPC:" + PC);
+	       	        PC = (reg_file[14].longValue() == reg_file[15].longValue()) ? rt : PC + 1;
         			break;
         		case "11": // bne
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+9);
-        			rt = Integer.valueOf(reg1,2).intValue();
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+9);
+        			//rt = Integer.valueOf(reg1,2).intValue();
+        			rt = getJmpImm(curr_inst, OPCODE_LENGTH);
 	       	        System.out.println("bne " + rt + "\t\tPC:" + PC);
-	       	        PC = (reg_file[12].longValue() != reg_file[13].longValue()) ? rt : PC + 1;
+	       	        PC = (reg_file[14].longValue() != reg_file[15].longValue()) ? rt : PC + 1;
         			break;
         	}
         	break;
@@ -1052,6 +1093,18 @@ public class ISASimulator {
         System.out.println("unrecognized command.");
       }
     }
+  }
+  
+  public static int getRegImm(String curr_inst, int OPCODE_LENGTH)
+  {
+	  String regImm = curr_inst.substring(OPCODE_LENGTH, OPCODE_LENGTH+4);
+	  return Integer.valueOf(regImm, 2).intValue();
+  }
+  
+  public static int getJmpImm(String curr_inst, int OPCODE_LENGTH)
+  {
+	  String imm = curr_inst.substring(OPCODE_LENGTH, OPCODE_LENGTH+9);
+	  return Integer.valueOf(imm, 2).intValue();
   }
 
   public static void main(String[] args) {
