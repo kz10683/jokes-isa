@@ -1,4 +1,4 @@
-
+package sim;
 
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue; // for channels
@@ -833,7 +833,7 @@ public class ISASimulator {
         			break;
         	}
         	break;        	
-        case 5: // poll is for out, and offer is for in
+        case 5: 
         	switch(func_code)
         	{
         		case "00": // in
@@ -841,7 +841,7 @@ public class ISASimulator {
 	       	        rt = Integer.valueOf(reg1,2).intValue();
 	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
 	       	        rs = Integer.valueOf(reg2,2).intValue();
-        			channels.get(rt).offer(new Int34(rs));
+        			reg_file[rt] = channels.get((int)(reg_file[rs].longValue())).poll();
         			PC++;
         			break;
         		case "01": // out
@@ -849,7 +849,7 @@ public class ISASimulator {
 	       	        rt = Integer.valueOf(reg1,2).intValue();
 	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
 	       	        rs = Integer.valueOf(reg2,2).intValue();
-        			// channels.set(rs, channels.get(rt).poll()); 
+	       	        addToChannel((int)(reg_file[rs].longValue()), reg_file[rt]); 
         			PC++;
         			break;
         		case "10": // halt   
