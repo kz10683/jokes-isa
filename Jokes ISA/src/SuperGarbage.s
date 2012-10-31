@@ -2,11 +2,11 @@
 foo:
 	.word 0x123
 fooPtr:
-	foo	
+	.word foo	
 fooPtr2:
-	foo
+	.word foo
 fooPtr3:
-	fooPtr2
+	.word fooPtr2
 
 .text
 

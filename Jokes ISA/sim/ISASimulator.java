@@ -837,21 +837,25 @@ public class ISASimulator {
         	switch(func_code)
         	{
         		case "00": // in
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
-	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        rs = Integer.valueOf(reg2,2).intValue();
-        			channels.get(rt).offer(new Int34(rs));
-        			PC++;
-        			break;
-        		case "01": // out
-        			reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
-	       	        rt = Integer.valueOf(reg1,2).intValue();
-	       	        reg2 = curr_inst.substring(OPCODE_LENGTH+4,OPCODE_LENGTH+8);
-	       	        rs = Integer.valueOf(reg2,2).intValue();
-        			// channels.set(rs, channels.get(rt).poll()); 
-        			PC++;
-        			break;
+        			//reg1 = curr_inst.substring(OPCODE_LENGTH,OPCODE_LENGTH+4);
+					//rt = Integer.valueOf(reg1, 2).intValue();
+					rt = getRegImm(curr_inst, OPCODE_LENGTH);
+					//reg2 = curr_inst.substring(OPCODE_LENGTH + 4, OPCODE_LENGTH + 8);
+					//rs = Integer.valueOf(reg2, 2).intValue();
+					rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
+					reg_file[rt] = channels.get((int) (reg_file[rs].longValue())).poll();
+					PC++;
+					break;
+            	case "01": // out
+					//reg1 = curr_inst.substring(OPCODE_LENGTH, OPCODE_LENGTH + 4);
+					//rt = Integer.valueOf(reg1, 2).intValue();
+					rt = getRegImm(curr_inst, OPCODE_LENGTH);
+					//reg2 = curr_inst.substring(OPCODE_LENGTH + 4, OPCODE_LENGTH + 8);
+					//rs = Integer.valueOf(reg2, 2).intValue();
+					rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
+					addToChannel((int) (reg_file[rs].longValue()), reg_file[rt]);
+					PC++;
+					break;
         		case "10": // halt   
         			halt = true;
         			break;
