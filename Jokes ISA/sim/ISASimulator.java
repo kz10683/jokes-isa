@@ -62,7 +62,6 @@ public class ISASimulator {
   // reset everythinig to it's initial state (i.e. memory/registers/channels cleared and PC = 0)
   public void resetSimulator() {
     PC = 0;
-    reg_file[0] = new Int34(8191); // TODO: Set the reg that holds your stack pointer to 8191
     
     // reset memory
     clearMem(true);
@@ -74,6 +73,8 @@ public class ISASimulator {
     // make sure we have the default channel size
     channel_buffer_size = 16;
     setBufferSize(channel_buffer_size); // this also clears the channels
+    
+    reg_file[0] = new Int34(8191); // TODO: Set the reg that holds your stack pointer to 8191
   }
 
   // initialize the memory (create and zero out)
