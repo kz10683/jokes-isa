@@ -227,7 +227,7 @@ public class Jokes extends Assembler
         
         if (str.length() != 14) return str + " is not a valid instruction! ";
         
-        System.out.print(str + "\t\t");
+        System.out.print(instruction.line_number + "\t" + str + "\t\t");
         instruction.print();
         
         return "000" + str;
@@ -236,9 +236,9 @@ public class Jokes extends Assembler
 	@Override
 	void updateProgramCounter(Instruction instruction)
 	{
-		if (instruction.operator.equals("sloi"))
-			this.programCounter += 2;
-		else
+		//if (instruction.operator.equals("sloi"))
+		//	this.programCounter += 2;
+		//else
 			this.programCounter++;
 	}
 

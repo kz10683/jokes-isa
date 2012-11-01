@@ -865,8 +865,8 @@ public class ISASimulator {
 	       	        imm = Integer.valueOf(immediate,2).intValue();
 	       	        int ir_immediate = (int)(reg_file[2].longValue());
 	       	        System.out.println("sloi $" + rt + ", " + imm + "\t\tPC: " + PC); 
-	       	        reg_file[rt] = reg_file[rt].shiftLeft(imm);
-	       	        reg_file[rt] = reg_file[rt].or(new Int34(ir_immediate));
+	       	        reg_file[2] = reg_file[2].shiftLeft(imm);
+	       	        reg_file[rt] = reg_file[rt].or(reg_file[2]);
 	       	        PC++;
         			break;
         	}
@@ -912,6 +912,7 @@ public class ISASimulator {
         			//rt = Integer.valueOf(reg1,2).intValue();
         			rt = getJmpImm(curr_inst, OPCODE_LENGTH);
 	       	        System.out.println("blt " + rt + "\t\tPC:" + PC);
+	       	        System.out.println("Comparing " + reg_file[14] + " with " + reg_file[15] + " = " + (reg_file[14].longValue() < reg_file[15].longValue()) );
 	       	        PC = (reg_file[14].longValue() < reg_file[15].longValue()) ? rt : PC + 1;
         			break;
         		case "10": // beq

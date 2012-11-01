@@ -139,9 +139,9 @@ public class Int34 {
     // arithmetic left shift
     public Int34 shiftLeft(int n) {
       //  System.out.println("bit " + (33 - n) + " is set: " +bigValue.testBit(33-n));
-        if (bigValue.testBit(33 - n)) {
-          return new Int34(-1, bigValue.shiftLeft(n).abs().longValue());
-        }
+        //if (bigValue.testBit(33 - n)) {
+        // return new Int34(-1, bigValue.shiftLeft(n).abs().longValue());
+        //}
        
         return toInt34(bigValue.shiftLeft(n));
     }

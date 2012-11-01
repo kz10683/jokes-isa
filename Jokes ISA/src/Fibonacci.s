@@ -1,4 +1,7 @@
-lior $a0, 8
+lr 49
+lior $a0, $ir
+//lior $a0, 0
+//subi $a0, 1
 jal fib
 j done
 // 3 lines
@@ -7,11 +10,11 @@ fib: // for lior, if reset bit is 1, then it is a register. else, it is an immed
     sub $sp, 3         // decrement stack pointer
     sw $ra, $sp         // store stack pointer into ra
    
-    add $ir, 1       
+    lr 1       
     add $ir, $sp
     sw $s0, $ir          // store first fib(n-1)
 
-    add $ir, 2       
+    lr 2       
     add $ir, $sp
     sw $s1, $ir          // store next fib(n-2)
    
@@ -60,10 +63,10 @@ deadbeef:
     lr 223   
     sloi $v0, 9    // first 18 bits stored   
     lr 427       
-    sll $ir, 3    // need to shift extra 2 bits to 18th position for sloi
+    slli $ir, 3    // need to shift extra 2 bits to 18th position for sloi
     sloi $v0, 15    // first 27 bits stored
     lr 123       
-    sll $ir, 12   
+    slli $ir, 12   
     sloi $v0, 15    // 34 bits stored in $t0
     j exit
 // 11 lines        
@@ -78,7 +81,7 @@ twentynine:
     lr 492
     sloi $v0, 9
     lr 1
-    sll $ir, 3
+    slli $ir, 3
     sloi $v0, 15
     j exit
 // 8 lines    
@@ -89,7 +92,7 @@ thirty:
     lr 89
     sloi $v0, 9
     lr 3
-    sll $ir, 3
+    slli $ir, 3
     sloi $v0, 15
     j exit
 // 8 lines    
@@ -100,10 +103,10 @@ big1:
     lr 133
     sloi $v0, 9   
     lr 419
-    sll $ir, 3
+    slli $ir, 3
     sloi $v0, 15   
     lr 35
-    sll $ir, 12
+    slli $ir, 12
     sloi $v0, 15   
     j exit
 // 11 lines
@@ -114,21 +117,21 @@ big2:
     lr 279
     sloi $v0, 9
     lr 489
-    sll $ir, 3
+    slli $ir, 3
     sloi $v0, 15
     lr 57
-    sll $ir, 12
+    slli $ir, 12
     sloi $v0, 15
     j exit
 // 11 lines   
 exit:           
     lw $ra, $sp                 // reload next ra
    
-    add $ir, 1       
+    lr 1       
     add $ir, $sp
     lw $s0, $ir         // reload next fib(n-1)
 
-    add $ir, 2       
+    lr 2       
     add $ir, $sp
     lw $s1, $ir                   // reload next fib(n-2)
 
