@@ -1,5 +1,4 @@
-lr 30
-lior $a0, $ir
+lior $a0, 8
 jal fib
 j done
 // 3 lines
