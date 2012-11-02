@@ -1,17 +1,5 @@
-.data
-foo:
-	.word 0x123
-fooPtr:
-	.word foo	
-fooPtr2:
-	.word foo
-fooPtr3:
-	.word fooPtr2
-
-.text
-
-lior $a0, 5                 // pc
-lior $a1, mem                // mem
+//lior $a0, 5                 // pc
+//lior $a1, mem            // mem
 jal supergarbage
 j done
 
@@ -23,66 +11,63 @@ supergarbage:
 
 sw $ra, $sp            // callee saved registers
 
-add $ir, $sp
+lior $t0, 1
 
-subi $ir, 1
+add $t0, $sp
 
-sw $s0, $ir            // store $s0
+sw $s0, $t0            // store $s0
 
-add $ir, $sp
+addi $t0, 1
 
-subi $ir, 2
+sw $s1, $t0            // store $s1
 
-sw $s1, $ir            // store $s1
+addi $t0, 1
 
-add $ir, $sp
+sw $s2, $t0            // store $s2
 
-subi $ir, 3
+addi $t0, 1
 
-sw $s2, $ir            // store $s2
+sw $s3, $t0            // store $s3
 
-add $ir, $sp
+// pc = $a0, mem = $a1
+// op = $s0, srcA = $s1, srcB = $s2, dest = $s3
 
-subi $ir, 4
-
-sw $s3, $ir            // store $s3
-
-           add $ir, $a0
-           add $ir, $a1                 // t1 = instruction = location of mem[pc]
-           lw $s0, $ir                    // s0 = instruction->op
-           addi $ir, 1                    // location of instruction->srcA
-           lw $s1, $ir                    // t0 = instruction->srcA
-           addi $ir, 1                    // location of instruction->srcB
-           lw $s2, $ir                    // t0 = instruction->srcB
-           addi $ir, 1                    // location of instruction->dest
-           lw $s3, $ir                    // t0 = instruction->dest
-           addi $a0, 1                  // pc = pc + 1   
+           lior $t0, $a0
+           add $t0, $a1                 	// t1 = instruction = location of mem[pc]
+           lw $s0, $t0                    	// s0 = instruction->op
+    	   addi $t0, 1           
+           lw $s1, $t0                    	// s1 = instruction->srcA
+           addi $t0, 1                    	// location of instruction->srcB
+           lw $s2, $t0                   	// s2 = instruction->srcB
+           addi $t0, 1                    	// location of instruction->dest
+           lw $s3, $t0                    	// s3 = instruction->dest
+           addi $a0, 4                  	// pc = pc + 4   
 // lines = 24
 
 start_switch:
 
-case0:                         // mem[dest] = mem[srcA] - mem[srcB]; break;
+case0:                         				// mem[dest] = mem[srcA] - mem[srcB]; break;
    
-    cmp $s0, 0
-           bne case1               // go to case1 if its not 0
-   
+    	   cmp $s0, 0
+           bne case1               			// go to case1 if its not 0
+
            // mem[srcA]   
-           add $ir, $s1                 // get srcA
-           add $ir, $a1                 // get location of mem[srcA]
-           lw $t0, $ir                     // get the value of mem[srcA]
+           lior $ir, $s1                 	// get srcA
+           add $ir, $a1                		// get location of mem[srcA]
+           lw $t0, $ir                     	// get the value of mem[srcA]
             
            // mem[srcB]
-           add $ir, $s2                 // get srcB
-           add $ir, $a1                 // get location of mem[srcB]
-           lw $t1, $ir                     // get the value of mem[srcB]
+           lior $ir, $s2                 	// get srcB
+           add $ir, $a1                 	// get location of mem[srcB]
+           lw $t1, $ir                     	// get the value of mem[srcB]
    
-           sub $t0, $t1                 // mem[srcA] - mem[srcB], $t0 = $t0 - $t1
+           sub $t0, $t1                 	// mem[srcA] - mem[srcB], $t0 = $t0 - $t1
    
            // mem[dest]
-           add $ir, $s3                 // get dest
-           add $ir, $a1                 // get location of mem[dest]
+           lior $ir, $s3                 	// get dest
+           add $ir, $a1                 	// get location of mem[dest]
    
-           sw $t0, $ir                    // mem[dest] = mem[srcA] - mem[srcB];
+           sw $t0, $ir                   	// mem[dest] = mem[srcA] - mem[srcB];
    
            j end_switch
 // lines = 13
@@ -93,14 +78,14 @@ case1:                                     // mem[dest] = mem[srcA] >> 1; break;
            bne case2               // go to case2 if its not 1
    
            // mem[srcA] >> 1   
-           add $ir, $s1                 // get srcA
+           lior $ir, $s1                 // get srcA
            add $ir, $a1                 // get location of mem[srcA]
            lw $t0, $ir                     // get the value of mem[srcA]
    
-           srl $t0, 1                      // value of mem[srcA] >> 1;
+           srli $t0, 1                      // value of mem[srcA] >> 1;
    
            // mem[dest]
-           add $ir, $s3                 // get dest
+           lior $ir, $s3                 // get dest
            add $ir, $a1                 // get location of mem[dest]
    
            sw $t0, $ir                    // mem[dest] = mem[srcA] >> 1;
@@ -113,20 +98,22 @@ case2:                                     // mem[dest] = ~(mem[srcA] | mem[srcB
     cmp $s0, 2
            bne case3               // go to case3 if its not 2   
            // mem[srcA]   
-           add $ir, $s1                 // get srcA
+          
+
+lior $ir, $s1                 // get srcA
            add $ir, $a1                 // get location of mem[srcA]
            lw $t0, $ir                     // get the value of mem[srcA]
    
            // mem[srcB]
-           add $ir, $s2                 // get srcB
+           lior $ir, $s2                 // get srcB
            add $ir, $a1                 // get location of mem[srcB]
            lw $t1, $ir                     // get the value of mem[srcB]
    
            // ~(mem[srcA] | mem[srcB]
            nor $t0, $t1         // ~(mem[srcA] | mem[srcB]
-          
+
            // mem[dest]
-           add $ir, $s3                 // get dest
+           lior $ir, $s3                 // get dest
            add $ir, $a1                 // get location of mem[dest]
            sw $t0, $ir                    // mem[dest] = ~(mem[srcA] | mem[srcB])
    
@@ -139,14 +126,15 @@ case3:              // temp = mem[srcB]; mem[dest] = mem[mem[srcA]]; mem[mem[src
            bne case4               // go to case4 if its not 3
    
            // mem[srcA]   
-           add $ir, $s1                 // get srcA
+           lior $ir, $s1                 // get srcA
            add $ir, $a1                 // get location of mem[srcA]
            lw $t0, $ir                     // get the value of mem[srcA]
    
            // mem[srcB]
-           add $ir, $s2                 // get srcB
+           lior $ir, $s2                 // get srcB
            add $ir, $a1                 // get location of mem[srcB]
            lw $t1, $ir                     // get the value of mem[srcB]
+          
    
            // mem[mem[srcA]]
            add $t0, $a1               // get the location of mem[mem[srcA]]
@@ -154,7 +142,7 @@ case3:              // temp = mem[srcB]; mem[dest] = mem[mem[srcA]]; mem[mem[src
            lw $t0, $t0                    // value of mem[mem[srcA]]
    
            // mem[dest]
-           add $ir, $s3                 // get dest
+           lior $ir, $s3                 // get dest
            add $ir, $a1                 // get location of mem[dest]
            sw $t0, $ir                    // mem[dest] = mem[mem[srcA]]
    
@@ -170,17 +158,17 @@ case4:
            bne case5               // go to case5 if its not 4
    
            // mem[srcA]   
-           add $ir, $s1            // get srcA
+           lior $ir, $s1            // get srcA
            add $ir, $a1            // get location of mem[srcA]
            lw $t0, $ir                     // get the value of mem[srcA]
 
-    in $t2, $t0                    // in  mem[dest], mem[srcA];
-
            // mem[dest]
-           add $ir, $s3            // get dest
+           lior $ir, $s3            // get dest
            add $ir, $a1            // get location of mem[dest]
-           sw $t2, $ir                     // mem[dest]
-   
+           lw $t1, $ir                     // mem[dest]
+
+    in $t1, $t0                    // in  mem[dest], mem[srcA];
+
            j end_switch
 // lines = 10
 
@@ -190,12 +178,12 @@ case5:                                     // out mem[srcA], mem[srcB]; break;
            bne case6           // go to case6 if its not 5
    
            // mem[srcA]   
-           add $ir, $s1                 // get srcA
+           lior $ir, $s1                 // get srcA
            add $ir, $a1                 // get location of mem[srcA]
            lw $t0, $ir                     // get the value of mem[srcA]
 
            // mem[srcB]
-           add $ir, $s2                 // get srcB
+           lior $ir, $s2                 // get srcB
            add $ir, $a1                 // get location of mem[srcB]
            lw $t1, $ir                     // get the value of mem[srcB]
    
@@ -210,11 +198,11 @@ case6:
            bne case7           // go to case7 if its not 6
 
            // mem[dest]
-           add $ir, $s3                 // get dest
+           lior $ir, $s3                 // get dest
            add $ir, $a1                 // get location of mem[dest]   
            sw $a0, $ir                   // mem[dest] = pc
    
-           add $ir, $s1                  
+           lior $ir, $s1                  
            add $ir, $a1                 // t1 = location of mem[srcA]
            lw $t1, $ir                     // value of mem[srcA]
 
@@ -223,10 +211,10 @@ case6:
            j end_switch
    
 case6if:
-           add $ir, $s2
+           lior $ir, $s2        // this is srcB
            add $ir, $a1                 // get the location of mem[srcB]
            lw $t1, $ir                     // value of mem[srcB]
-           add $a0, $t1                // pc = mem[srcB]
+           lior $a0, $t1                // pc = mem[srcB]
            j end_switch
 // lines = 16
 
@@ -235,35 +223,27 @@ case7:
     cmp $s0, 7
            bne end_switch
    
-           lior $v0, $a0        // $v0 = $a0
+           lior $v0, $a0            // $v0 = $a0
 
-lw $ra, $sp        // restore saved registers
+lw $ra, $sp            // restore saved registers
 
-add $ir, $sp
+lior $t0, 1
 
-addi $ir, 1
+add $t0, $sp
 
-lw $s0, $ir
+lw $s0, $t0            // reload $s0
 
-add $ir, $sp
+addi $t0, 1
 
-addi $ir, 2
+lw $s1, $t0            // reload $s1
 
-lw $s1, $ir
+addi $t0, 1
 
-add $ir, $sp
+lw $s2, $t0            // reload $s2
 
-addi $ir, 3
+addi $t0, 1
 
-lw $s2, $ir
-
-add $ir, $sp
-
-addi $ir, 4
-
-lw $s3, $ir
-
-addi $sp, 5
+lw $s3, $t0            // reload $s3
 
            jr $ra
 

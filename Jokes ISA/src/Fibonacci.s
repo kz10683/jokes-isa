@@ -1,4 +1,4 @@
-lior $a0, 8
+lior $a0, 7
 jal fib
 j done
 // 3 lines
