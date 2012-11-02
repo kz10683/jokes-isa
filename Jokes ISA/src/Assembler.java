@@ -457,18 +457,18 @@ public abstract class Assembler
       }
       else
       {
-    	if (currentCodeSection == 1)
-    	{
-    		//System.out.println(sourceCodeLine);
-    		memory.add(sourceCodeLine, dataMemoryAddress);
-            dataMemoryAddress++;
-    	}
-    	else
-    	{
-	        instructions[instructionCount] = processInstruction(sourceCodeLine);
-	        updateProgramCounter(instructions[instructionCount]);
-	        instructionCount++; 
-    	}
+    	  if (currentCodeSection == 1)
+          {
+              //System.out.println(sourceCodeLine);
+              memory.add(sourceCodeLine, dataMemoryAddress);
+              dataMemoryAddress++;
+          }
+          else
+          {
+              instructions[instructionCount] = processInstruction(sourceCodeLine);
+              updateProgramCounter(instructions[instructionCount]);
+              instructionCount++; 
+          }
       }
       sourceCodeLine = getNextInputLine();
     }

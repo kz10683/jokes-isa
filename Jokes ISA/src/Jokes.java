@@ -1,7 +1,3 @@
-/*
- * 
- */
-
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -236,10 +232,7 @@ public class Jokes extends Assembler
 	@Override
 	void updateProgramCounter(Instruction instruction)
 	{
-		//if (instruction.operator.equals("sloi"))
-		//	this.programCounter += 2;
-		//else
-			this.programCounter++;
+		this.programCounter++;
 	}
 
 	@Override
