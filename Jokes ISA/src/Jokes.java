@@ -29,6 +29,14 @@ public class Jokes extends Assembler
 	@Override
 	String generateCode(Instruction instruction) 
     {
+		if (instruction.operator.equalsIgnoreCase("halt"))
+		{
+			String str = "10100000000010";
+	        System.out.print(instruction.line_number + "\t" + str + "\t\t");
+	        instruction.print();
+			return "000" + str;
+		}
+		
 		String opcode = "";
         String func_code = "";
         String op1 = instruction.operands[0].name;
@@ -198,7 +206,6 @@ public class Jokes extends Assembler
             case "lr":   opcode = "100"; func_code = "11"; break;    
             case "in":   opcode = "101"; func_code = "00"; break; 
             case "out":  opcode = "101"; func_code = "01"; break;
-            case "halt": opcode = "101"; func_code = "10"; break;
             case "sloi": opcode = "101"; func_code = "11"; break;
             case "ba":   opcode = "110"; func_code = "00"; break;
             case "j":    opcode = "110"; func_code = "01"; break;
@@ -245,7 +252,7 @@ public class Jokes extends Assembler
 	@Override
 	void replaceInstructionLabel(Instruction instruction)
 	{
-		if (instruction.operands[0].getOperandType().equals("label"))
+		if (instruction.operands.length != 0 && instruction.operands[0].getOperandType().equals("label"))
 		{
 			//System.out.println(instruction.operands[0].name + " " + map.get(instruction.operands[0].name));
 			String name = instruction.operands[0].name;

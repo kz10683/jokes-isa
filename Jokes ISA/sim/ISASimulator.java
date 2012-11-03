@@ -772,18 +772,20 @@ public class ISASimulator {
         		case "00": // in
 					rt = getRegImm(curr_inst, OPCODE_LENGTH);
 					rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
+	       	        System.out.println("in $" + rt + ", $" + rs + "\t\tPC: " + PC); 
 					data_mem[(int)reg_file[rt].longValue()] = channels.get((int) (reg_file[rs].longValue())).poll();
 					PC++;
 					break;
             	case "01": // out
 					rt = getRegImm(curr_inst, OPCODE_LENGTH);
 					rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
-					addToChannel((int) (reg_file[rs].longValue()), data_mem[(int)reg_file[rt].longValue()]);
+	       	        System.out.println("out $" + rt + ", $" + rs + "\t\tPC: " + PC); 
+					addToChannel((int) (reg_file[rs].longValue()), reg_file[rt]);
 					PC++;
 					break;
         		case "10": // halt   
         			halt = true;
-        			break;
+        			return;
         		case "11": // sloi
 	       	        rt = getRegImm(curr_inst, OPCODE_LENGTH);
 	       	        rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
