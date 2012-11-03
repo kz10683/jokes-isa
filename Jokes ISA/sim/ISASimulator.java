@@ -732,7 +732,7 @@ public class ISASimulator {
 	       	        rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        System.out.println("lw $" + rt + ", $" + rs + "\t\tPC: " + PC); 
 	       	        reg_file[rt] = data_mem[(int)(reg_file[rs].longValue())];
-	       	        reg_file[3] = new Int34(0);
+	       	        reg_file[2] = new Int34(0);
 	       	        PC++;
         			break;
         		case "01": // sw
@@ -740,7 +740,7 @@ public class ISASimulator {
 	       	        rs = getRegImm(curr_inst, OPCODE_LENGTH + 4);
 	       	        System.out.println("sw $" + rt + ", $" + rs + "\t\tPC: " + PC); 
 	       	        data_mem[(int)(reg_file[rs].longValue())] = reg_file[rt];
-	       	        reg_file[3] = new Int34(0);
+	       	        reg_file[2] = new Int34(0);
 	       	        PC++;
         			break;
         		case "10": // lior
@@ -828,26 +828,26 @@ public class ISASimulator {
         			rt = getJmpImm(curr_inst, OPCODE_LENGTH);
 	       	        System.out.println("bgt " + rt + "\t\tPC:" + PC);
 	       	        PC = (reg_file[14].longValue() > reg_file[15].longValue()) ? rt : PC + 1;
-	       	        reg_file[3] = new Int34(0);
+	       	        reg_file[2] = new Int34(0);
         			break;
         		case "01": // blt
         			rt = getJmpImm(curr_inst, OPCODE_LENGTH);
 	       	        System.out.println("blt " + rt + "\t\tPC:" + PC);
 	       	        // System.out.println("Comparing " + reg_file[14] + " with " + reg_file[15] + " = " + (reg_file[14].longValue() < reg_file[15].longValue()) );
 	       	        PC = (reg_file[14].longValue() < reg_file[15].longValue()) ? rt : PC + 1;
-	       	        reg_file[3] = new Int34(0);
+	       	        reg_file[2] = new Int34(0);
         			break;
         		case "10": // beq
         			rt = getJmpImm(curr_inst, OPCODE_LENGTH);
         			System.out.println("beq " + rt + "\t\tPC:" + PC);
 	       	        PC = (reg_file[14].longValue() == reg_file[15].longValue()) ? rt : PC + 1;
-	       	        reg_file[3] = new Int34(0);
+	       	        reg_file[2] = new Int34(0);
         			break;
         		case "11": // bne
         			rt = getJmpImm(curr_inst, OPCODE_LENGTH);
 	       	        System.out.println("bne " + rt + "\t\tPC:" + PC);
 	       	        PC = (reg_file[14].longValue() != reg_file[15].longValue()) ? rt : PC + 1;
-	       	        reg_file[3] = new Int34(0);
+	       	        reg_file[2] = new Int34(0);
         			break;
         	}
         	break;

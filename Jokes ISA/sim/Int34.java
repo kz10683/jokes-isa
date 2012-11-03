@@ -31,7 +31,7 @@ public class Int34 {
      * For our version, we only have unsigned integers.
      */
     public Int34(long value) {
-    	/*if (Long.signum(value) == 1) {
+    	if (Long.signum(value) == 1) {
     	    //If bit 33 (counting from zero) is 1
     	    //calculate two's compliment
     		if (value >= 0x200000000L)
@@ -40,8 +40,8 @@ public class Int34 {
     		    create(1, value);
     	} else {
     		create(-1, -1 * value);
-    	}*/
-    	create(1, value);
+    	}
+    	//create(1, value);
     }
 
     /**

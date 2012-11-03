@@ -31,7 +31,7 @@ sw $s3, $t0            // store $s3
 
 // pc = $a0, mem = $a1
 // op = $s0, srcA = $s1, srcB = $s2, dest = $s3
-
+supergarbage0:
            lior $t0, $a0
            add $t0, $a1                 	// t1 = instruction = location of mem[pc]
            lw $s0, $t0                    	// s0 = instruction->op
@@ -251,7 +251,7 @@ jr $ra
 // lines = 18
 
 end_switch:
-           j supergarbage            // return to beginning of loop
+           j supergarbage0            // return to beginning of loop
 
 done:
 // lines = 1
