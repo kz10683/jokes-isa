@@ -1,6 +1,3 @@
-lior $a0, 0
-subi $a0, 1
-
 jal fib
 j done
 // 3 lines
